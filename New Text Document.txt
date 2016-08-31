@@ -1,0 +1,338 @@
+  <!DOCTYPE html>
+  <html>
+      
+      <head>
+  <title>The Classical NewsVendor Problem</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="w3_1.css">
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+  /* Set the height of the grid so that left and right col can be 100% (adjust as needed) */
+  .w3-row {height: 500px}
+      
+  /* Set a 100% height to left and right col */
+  .w3-col.m2, w3-col.m2 {height: 100%;}
+      
+  /* On small screens, set grid height to 'auto' */
+  @media screen and (max-width: 601px) {
+    .w3-row {height:auto;} 
+  }
+  body,td,th {
+      font-family: Georgia, "Times New Roman", Times, serif;
+  }
+  </style>
+
+
+
+
+  
+  
+  
+  
+  
+  <!--The following lines are written by Samant-->
+
+
+  <!-- This is for the slider to present  the powerpoint slides -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <script src="sss/sss.min.js"></script>
+  <link rel="stylesheet" href="sss/sss.css" type="text/css" media="all">
+
+  <script>
+  jQuery(function($) {
+  $('.mYslider').sss();
+  });
+  </script>
+  <style>
+    .mYslider{
+      float: center;
+      padding: 20px;
+      margin: 20px 0px 20px 0px;
+      border: solid #d0d0d0 10px;
+    }
+  </style>
+  <!-- Code for slider ends here -->
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
+
+        <style>
+
+            .fullBody #graphArea{
+                //overflow: scroll;
+                display: inline-block;
+                width: 43%;
+                height: 350px;
+                border: 1px solid black;
+                margin: 25px;
+                vertical-align: top;
+            }
+
+            .fullBody .column {
+                vertical-align: top;
+                display: inline-block;
+                width: 25%;
+                padding:1em;
+            }
+
+
+            .fullBody form div {
+                margin: 0;
+                padding: 0;
+                padding-top: 1px;
+            }
+            .fullBody form div label {
+                float: left;
+                width: 45%;
+                font: bold 0.9em Arial;
+                padding:0.1em;
+            }
+
+            .fullBody fieldset {
+                border: 1px solid;
+                margin-top: 0.5em;
+                padding: 0.5em;
+                background-color:light grey;
+
+            }
+
+            .fullBody legend {
+                font: bold 0.8em Arial;
+                color: #00008B;
+                background-color:white ;
+            }
+
+
+        </style>
+        <script>
+                    
+                    function rnd2() {
+                       return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
+                   }
+                   
+                   var getRandomDemand = function (mn, sd) {
+                    var r, dem;
+                            r = rnd2();      //for uniform use   r = 2 * Math.random() - 1;
+                            dem = Math.floor(((3 * sd * r) + Number(mn)));
+                            return dem;
+                    };
+                    
+                    function graph_show(){
+                        //console.log('testing random value: mean = 1000, sd = 25',  getRandomDemand(1000,25));
+                        
+                        document.getElementById("graphArea").style.visibility = 'visible';
+                    };
+            
+                    function runtrial() {
+                        
+                        document.getElementById("graphArea").style.visibility = 'hidden';
+
+                    
+
+
+                    var pcost = + document.getElementById("v").value;
+                            var sprice = + document.getElementById("p").value;
+                            var salvalue = + document.getElementById("g").value;
+                            var scost = + document.getElementById("b").value;
+                            var sdev = + document.getElementById("sd").value;
+                            var mean = + document.getElementById("m").value;
+                            var runs = + document.getElementById("R").value;
+                            var inc = + document.getElementById("Inc").value;
+                            var q1 = Number(mean) - 3 * Number(sdev);
+                            var q2 = Number(mean) + 3 * Number(sdev);
+                            var profit = 0;
+                            var p = 6 * sdev;
+                            var max_profit = 0, max_profit_pos = q1, demand;
+                            var points = new Array();
+                            for (var i = q1, t = 0; i <= q2; i++, t++)
+                    {
+                    var sum = 0;
+                            for (var j = 0; j <= runs - 1; j++)
+                    {
+                    demand = getRandomDemand(mean, sdev);
+                            if (demand < i)
+                    {
+                    profit = demand * sprice - i * pcost + salvalue * (i - demand);
+                    }
+                    else
+                    {
+                    profit = i * sprice - i * pcost - scost * (demand - i);
+                    }
+                    sum = sum + profit;
+                    }
+
+                    profit = sum / runs;
+                            points[t] = profit;
+                            if (max_profit < profit) {
+                    max_profit = profit;
+                            max_profit_pos = i;
+                    }
+                    }
+
+                    document.getElementById('QX').value = max_profit_pos;
+                            document.getElementById('Ep').value = max_profit;
+                            var labls = Array.from({length: points.length}, (v, i) => (q1 + i));
+                            console.log(labls);
+                            var data = {
+                            labels: labls, //["January", "February", "March", "April", "May", "June", "July"],
+                                    datasets: [
+                                    {
+                                    label: "My First dataset",
+                                            fillColor: "rgba(151,187,205,0.2)",
+											strokeColor: "rgba(151,187,205,1)",
+											pointColor: "rgba(151,187,205,1)",
+											pointStrokeColor: "#fff",
+											pointHighlightFill: "#fff",
+											pointHighlightStroke: "rgba(151,187,205,1)",
+                                            data: points//[65, 59, 80, 81, 56, 55, 40]
+                                    }
+                                    ]
+                            };
+                            document.getElementById("canvasContainer").innerHTML =
+                            "<canvas id=\"myChart\" width=\"650\" height=\"350\"></canvas>";
+                    
+//                            if (document.getElementById("graph_choice").checked == true) {
+
+                    // Get the context of the canvas element we want to select
+                    var ctx = document.getElementById("myChart").getContext("2d");
+                            var myNewChart = new Chart(ctx).Line(data);
+                    }
+
+//                    }
+                    ;
+        </script>
+<!--Code for simulator ends here-->
+<script type="text/javascript" language="javascript">
+<!--
+function FP_popUpMsg(msg) {//v1.0
+ alert(msg);
+}
+
+function FP_changeProp() {//v1.0
+ var args=arguments,d=document,i,j,id=args[0],o=FP_getObjectByID(id),s,ao,v,x;
+ d.$cpe=new Array(); if(o) for(i=2; i<args.length; i+=2) { v=args[i+1]; s="o"; 
+ ao=args[i].split("."); for(j=0; j<ao.length; j++) { s+="."+ao[j]; if(null==eval(s)) { 
+  s=null; break; } } x=new Object; x.o=o; x.n=new Array(); x.v=new Array();
+ x.n[x.n.length]=s; eval("x.v[x.v.length]="+s); d.$cpe[d.$cpe.length]=x;
+ if(s) eval(s+"=v"); }
+}
+
+function FP_getObjectByID(id,o) {//v1.0
+ var c,el,els,f,m,n; if(!o)o=document; if(o.getElementById) el=o.getElementById(id);
+ else if(o.layers) c=o.layers; else if(o.all) el=o.all[id]; if(el) return el;
+ if(o.id==id || o.name==id) return o; if(o.childNodes) c=o.childNodes; if(c)
+ for(n=0; n<c.length; n++) { el=FP_getObjectByID(id,c[n]); if(el) return el; }
+ f=o.forms; if(f) for(n=0; n<f.length; n++) { els=f[n].elements;
+ for(m=0; m<els.length; m++){ el=FP_getObjectByID(id,els[n]); if(el) return el; } }
+ return null;
+}
+
+function score() {
+
+		
+var sc = 0;
+	Ans = document.getElementById('Radio12').checked
+	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio22').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio33').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio41').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio53').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 	
+ 	Ans = document.getElementById('Radio62').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio71').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio83').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+		
+ 	Ans = document.getElementById('Radio91').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+	
+	Ans = document.getElementById('Radio102').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}		
+
+  		
+	if (sc >=10)
+	{alert("Excellent! Your all answers are correct. Your score is: " + sc);	
+	document.getElementById('Radio11').parentNode.style.background="#0f0"
+	document.getElementById('Radio23').parentNode.style.background="#0f0"
+	document.getElementById('Radio31').parentNode.style.background="#0f0"
+	document.getElementById('Radio41').parentNode.style.background="#0f0"
+	document.getElementById('Radio51').parentNode.style.background="#0f0"
+	document.getElementById('Radio63').parentNode.style.background="#0f0"
+	document.getElementById('Radio73').parentNode.style.background="#0f0"
+	document.getElementById('Radio82').parentNode.style.background="#0f0"
+	document.getElementById('Radio93').parentNode.style.background="#0f0"
+	document.getElementById('Radio101').parentNode.style.background="#0f0"
+	}
+	
+	if (sc <10 && sc>=7) 
+	{alert("Good. Your score is: " + sc);	
+ 	document.getElementById('Radio11').parentNode.style.background="#0f0"
+	document.getElementById('Radio23').parentNode.style.background="#0f0"
+	document.getElementById('Radio31').parentNode.style.background="#0f0"
+	document.getElementById('Radio41').parentNode.style.background="#0f0"
+	document.getElementById('Radio51').parentNode.style.background="#0f0"
+	document.getElementById('Radio63').parentNode.style.background="#0f0"
+	document.getElementById('Radio73').parentNode.style.background="#0f0"
+	document.getElementById('Radio82').parentNode.style.background="#0f0"
+	document.getElementById('Radio93').parentNode.style.background="#0f0"
+	document.getElementById('Radio101').parentNode.style.background="#0f0"
+	
+	}
+ 	if (sc < 7)
+ 		{alert("Study the tutorials and try it again. Your score is: " + sc );}
+
+  	return null;
+	
+	
+}
+// -->
+</script>
+
+  
+  
+
+  
+  
+  
+
+  </head>
+  <body bgcolor="#F4F4F4">
+  <header>
+  <div  class="w3-topnav w3-large w3-teal w3-card-2 " >
+  <div >
+  <div style="float:left;"  >
+   <a href="http://www.iitkgp.ac.in" ><img src="kgp.png" width="83" height="96" /></a>
+  </div>
+  <div  style="float:left;" ><h3>Virtual Laboratory for Simulation and Gaming</h3><h4 class="w3-animate-left">The Classical NewsVendor Problem</h4></div>
+  
+  </div>
+  </div>
+  </header>
+ 
+  <div  class="w3-container"  style="background-image:url(ra2.png); background-repeat:no-repeat; background-size:cover; ">  
+     
+	 
+	 

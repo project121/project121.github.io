@@ -1,0 +1,1289 @@
+
+  <!DOCTYPE html>
+  <html>
+      
+      <head>
+  <title>The Classical NewsVendor Problem</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="w3_1.css">
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <style>
+  /* Set the height of the grid so that left and right col can be 100% (adjust as needed) */
+  .w3-row {height: 500px}
+      
+  /* Set a 100% height to left and right col */
+  .w3-col.m2, w3-col.m2 {height: 100%;}
+      
+  /* On small screens, set grid height to 'auto' */
+  @media screen and (max-width: 601px) {
+    .w3-row {height:auto;} 
+  }
+  body,td,th {
+      font-family: Georgia, "Times New Roman", Times, serif;
+  }
+  </style>
+
+
+
+
+  
+  
+  
+  
+  
+  <!--The following lines are written by Samant-->
+
+
+  <!-- This is for the slider to present  the powerpoint slides -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <script src="sss/sss.min.js"></script>
+  <link rel="stylesheet" href="sss/sss.css" type="text/css" media="all">
+
+  <script>
+  jQuery(function($) {
+  $('.mYslider').sss();
+  });
+  </script>
+  <style>
+    .mYslider{
+      float: center;
+      padding: 20px;
+      margin: 20px 0px 20px 0px;
+      border: solid #d0d0d0 10px;
+    }
+  </style>
+  <!-- Code for slider ends here -->
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
+
+        <style>
+
+            .fullBody #graphArea{
+                //overflow: scroll;
+                display: inline-block;
+                width: 43%;
+                height: 350px;
+                border: 1px solid black;
+                margin: 25px;
+                vertical-align: top;
+            }
+
+            .fullBody .column {
+                vertical-align: top;
+                display: inline-block;
+                width: 25%;
+                padding:1em;
+            }
+
+
+            .fullBody form div {
+                margin: 0;
+                padding: 0;
+                padding-top: 1px;
+            }
+            .fullBody form div label {
+                float: left;
+                width: 45%;
+                font: bold 0.9em Arial;
+                padding:0.1em;
+            }
+
+            .fullBody fieldset {
+                border: 1px solid;
+                margin-top: 0.5em;
+                padding: 0.5em;
+                background-color:light grey;
+
+            }
+
+            .fullBody legend {
+                font: bold 0.8em Arial;
+                color: #00008B;
+                background-color:white ;
+            }
+
+
+        </style>
+        <script>
+                    
+                    function rnd2() {
+                       return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
+                   }
+                   
+                   var getRandomDemand = function (mn, sd) {
+                    var r, dem;
+                            r = rnd2();      //for uniform use   r = 2 * Math.random() - 1;
+                            dem = Math.floor(((3 * sd * r) + Number(mn)));
+                            return dem;
+                    };
+                    
+                    function graph_show(){
+                        //console.log('testing random value: mean = 1000, sd = 25',  getRandomDemand(1000,25));
+                        
+                        document.getElementById("graphArea").style.visibility = 'visible';
+                    };
+            
+                    function runtrial() {
+                        
+                        document.getElementById("graphArea").style.visibility = 'hidden';
+
+                    
+
+
+                    var pcost = + document.getElementById("v").value;
+                            var sprice = + document.getElementById("p").value;
+                            var salvalue = + document.getElementById("g").value;
+                            var scost = + document.getElementById("b").value;
+                            var sdev = + document.getElementById("sd").value;
+                            var mean = + document.getElementById("m").value;
+                            var runs = + document.getElementById("R").value;
+                            var inc = + document.getElementById("Inc").value;
+                            var q1 = Number(mean) - 3 * Number(sdev);
+                            var q2 = Number(mean) + 3 * Number(sdev);
+                            var profit = 0;
+                            var p = 6 * sdev;
+                            var max_profit = 0, max_profit_pos = q1, demand;
+                            var points = new Array();
+                            for (var i = q1, t = 0; i <= q2; i++, t++)
+                    {
+                    var sum = 0;
+                            for (var j = 0; j <= runs - 1; j++)
+                    {
+                    demand = getRandomDemand(mean, sdev);
+                            if (demand < i)
+                    {
+                    profit = demand * sprice - i * pcost + salvalue * (i - demand);
+                    }
+                    else
+                    {
+                    profit = i * sprice - i * pcost - scost * (demand - i);
+                    }
+                    sum = sum + profit;
+                    }
+
+                    profit = sum / runs;
+                            points[t] = profit;
+                            if (max_profit < profit) {
+                    max_profit = profit;
+                            max_profit_pos = i;
+                    }
+                    }
+
+                    document.getElementById('QX').value = max_profit_pos;
+                            document.getElementById('Ep').value = max_profit;
+                            var labls = Array.from({length: points.length}, (v, i) => (q1 + i));
+                            console.log(labls);
+                            var data = {
+                            labels: labls, //["January", "February", "March", "April", "May", "June", "July"],
+                                    datasets: [
+                                    {
+                                    label: "My First dataset",
+                                            fillColor: "rgba(151,187,205,0.2)",
+											strokeColor: "rgba(151,187,205,1)",
+											pointColor: "rgba(151,187,205,1)",
+											pointStrokeColor: "#fff",
+											pointHighlightFill: "#fff",
+											pointHighlightStroke: "rgba(151,187,205,1)",
+                                            data: points//[65, 59, 80, 81, 56, 55, 40]
+                                    }
+                                    ]
+                            };
+                            document.getElementById("canvasContainer").innerHTML =
+                            "<canvas id=\"myChart\" width=\"650\" height=\"350\"></canvas>";
+                    
+//                            if (document.getElementById("graph_choice").checked == true) {
+
+                    // Get the context of the canvas element we want to select
+                    var ctx = document.getElementById("myChart").getContext("2d");
+                            var myNewChart = new Chart(ctx).Line(data);
+                    }
+
+//                    }
+                    ;
+        </script>
+<!--Code for simulator ends here-->
+<script type="text/javascript" language="javascript">
+<!--
+function FP_popUpMsg(msg) {//v1.0
+ alert(msg);
+}
+
+function FP_changeProp() {//v1.0
+ var args=arguments,d=document,i,j,id=args[0],o=FP_getObjectByID(id),s,ao,v,x;
+ d.$cpe=new Array(); if(o) for(i=2; i<args.length; i+=2) { v=args[i+1]; s="o"; 
+ ao=args[i].split("."); for(j=0; j<ao.length; j++) { s+="."+ao[j]; if(null==eval(s)) { 
+  s=null; break; } } x=new Object; x.o=o; x.n=new Array(); x.v=new Array();
+ x.n[x.n.length]=s; eval("x.v[x.v.length]="+s); d.$cpe[d.$cpe.length]=x;
+ if(s) eval(s+"=v"); }
+}
+
+function FP_getObjectByID(id,o) {//v1.0
+ var c,el,els,f,m,n; if(!o)o=document; if(o.getElementById) el=o.getElementById(id);
+ else if(o.layers) c=o.layers; else if(o.all) el=o.all[id]; if(el) return el;
+ if(o.id==id || o.name==id) return o; if(o.childNodes) c=o.childNodes; if(c)
+ for(n=0; n<c.length; n++) { el=FP_getObjectByID(id,c[n]); if(el) return el; }
+ f=o.forms; if(f) for(n=0; n<f.length; n++) { els=f[n].elements;
+ for(m=0; m<els.length; m++){ el=FP_getObjectByID(id,els[n]); if(el) return el; } }
+ return null;
+}
+
+function score() {
+
+		
+var sc = 0;
+	Ans = document.getElementById('Radio12').checked
+	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio22').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio33').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio41').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio53').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 	
+ 	Ans = document.getElementById('Radio62').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio71').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+ 		
+ 	Ans = document.getElementById('Radio83').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+		
+ 	Ans = document.getElementById('Radio91').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+	
+	Ans = document.getElementById('Radio102').checked
+ 	if (Ans == true)
+ 		{sc=sc+1;}
+		
+
+  		
+	if (sc >=10)
+	{alert("Excellent! Your all answers are correct. Your score is: " + sc);	
+	document.getElementById('Radio12').parentNode.style.background="#0f0"
+	document.getElementById('Radio22').parentNode.style.background="#0f0"
+	document.getElementById('Radio33').parentNode.style.background="#0f0"
+	document.getElementById('Radio42').parentNode.style.background="#0f0"
+	document.getElementById('Radio53').parentNode.style.background="#0f0"
+	document.getElementById('Radio62').parentNode.style.background="#0f0"
+	document.getElementById('Radio71').parentNode.style.background="#0f0"
+	document.getElementById('Radio83').parentNode.style.background="#0f0"
+	document.getElementById('Radio91').parentNode.style.background="#0f0"
+	document.getElementById('Radio102').parentNode.style.background="#0f0"
+	}
+	
+	if (sc <10 && sc>=7) 
+	{alert("Good. Your score is: " + sc);	
+ 	document.getElementById('Radio12').parentNode.style.background="#0f0"
+	document.getElementById('Radio22').parentNode.style.background="#0f0"
+	document.getElementById('Radio33').parentNode.style.background="#0f0"
+	document.getElementById('Radio42').parentNode.style.background="#0f0"
+	document.getElementById('Radio53').parentNode.style.background="#0f0"
+	document.getElementById('Radio62').parentNode.style.background="#0f0"
+	document.getElementById('Radio71').parentNode.style.background="#0f0"
+	document.getElementById('Radio83').parentNode.style.background="#0f0"
+	document.getElementById('Radio91').parentNode.style.background="#0f0"
+	document.getElementById('Radio102').parentNode.style.background="#0f0"
+	
+	}
+ 	if (sc < 7)
+ 		{alert("Study the tutorials and try it again. Your score is: " + sc );}
+
+  	return null;
+	
+	
+}
+// -->
+</script>
+			
+
+  
+  
+
+  
+  
+  
+
+  </head>
+  <body bgcolor="#F4F4F4">
+  <header>
+  <div  class="w3-topnav w3-large w3-teal w3-card-2 " >
+  <div >
+  <div style="float:left;"  >
+   <a href="http://www.iitkgp.ac.in" ><img src="kgp.png" width="83" height="96" /></a>
+  </div>
+  <div  style="float:left;" ><h3>Virtual Laboratory for Simulation and Gaming</h3><h4 class="w3-animate-left">Supply Chain Coordination</h4></div>
+  
+  </div>
+  </div>
+  </header>
+ 
+  <div  class="w3-container"  style="background-image:url(ra2.png); background-repeat:no-repeat; background-size:cover; ">  
+     
+  
+    <ul class="topnav ">
+    <li><a class="active" href="../index.html"><i class="material-icons w3-large">home</i></a></li>
+    <li><a class="" href="#" onClick="openCity('Home')">Home</a></li>
+    <li class="dropdown">
+    <a href="#" class="dropbtn">Theory</a>
+    <div class="dropdown-content ">
+      <a href="#" onClick="openCity('Pdec')">Problem Description</a>
+      <a href="#" onClick="openCity('Aphe')">Theory of Newsvendor Model</a>
+      <a href="#" onClick="openCity('Simflo')">Simulation flowchart</a>
+    </div>
+    
+  
+  </li>
+    <li class="dropdown">
+    <a href="#" class="dropbtn">Procedure</a>
+    <div class="dropdown-content ">
+      <a href="#" onClick="openCity('ppt')">Power Point Tutorial</a>
+     <!-- <a href="#">Video Tutorial</a> -->
+     
+    </div>
+    
+  
+  </li>
+    <li><a href="#" onClick="openCity('Simu')">Simulator</a></li>
+    <li><a href="#" onClick="openCity('ref')">Reference</a></li>
+    <li><a href="#" onClick="openCity('assign')">Assignment</a></li>
+    <li><a href="#" onClick="openCity('seval')">Self Evaluation</a></li>
+    <li><a href="#" onClick="openCity('fdbk')" >Feedback</a></li>
+    <li class="icon">
+      <a href="javascript:void(0);" style="font-size:15px;" onclick="myFunction()"><div class="ic"></div><div class="ic"></div><div class="ic"></div></a>
+    </li>
+  </ul>
+
+   <script>
+  function myFunction() {
+      document.getElementsByClassName("topnav")[0].classList.toggle("responsive");
+  }
+
+  </script>
+  
+     
+  
+        
+
+    </div>
+<!-- Introduction -->    
+    <div id="Home" class="w3-container city">
+   <h2 class="note">Module Learning Objectives:</h2>
+                 
+                    <ul class="note"  align="justify">
+                     
+                      <li>To understand the purpose and importance of Supply Chain Coordination using Contracts.</li>
+
+                      <li>To evaluate the efficiency of different types of  &quot;<strong>Contracts</strong>&quot; between the industrial partners of a supply chain.</li>
+
+                      <li>To learn the basics of <strong>Simulation</strong></li>
+
+                      <li>To understand the effect of Coordination between &quot;<strong>Supplier and Wholesaler</strong>&quot; using Simulation model.</li>
+
+
+                                          </ul>
+                  
+                
+</div>
+<!-- Introduction Ends -->
+
+
+
+
+<!-- Simulator Goes Here -->
+<div id="Simu" class="w3-container city">
+  <h2>Simulator</h2>
+  
+  
+  <div class="fullBody">
+            <form method="post" >
+
+                <div class="w3-col m3">
+                    <fieldset>
+                        <legend>Input Parameters</legend>
+                        <label for="item_name">Item Name:</label>
+                        <input type="text" name="Item Name" id="Name" class="txt" />
+                        <br>
+                        <br>
+                        <label for="Purchase_Cost">Purchase Cost:</label>
+                        <input type="text" name="Purchase Cost" id="v" class="txt" />
+                        <br>
+                        <br>
+                        <label for="Selling_Price">Selling Price:</label>
+                        <input type="text" name="Selling Price" id="p" class="txt" />
+                        <br>
+                        <br>
+                        <label for="Salvage_Value">Salvage Value:</label>
+                        <input type="text" name="Salvage Value" id="g" class="txt" />
+                        <br>
+                        <br>
+                        <label for="Shortage_Cost">Shortage Cost:</label>
+                        <input type="text" name="Shortage Cost" id="b" class="txt" />
+                        <br>
+                        <br>
+                        <label for="Std_Deviation">Std Deviation:</label>
+                        <input type="text" name="Std Deviation" id="sd" class="txt" />
+                        <br>
+                        <br>
+                        <label for="Mean_Demand">Mean Demand:</label>
+                        <input type="text" name="Mean Demand" id="m" class="txt" />
+                        <br>
+                        <br>
+                        <label for="No_Simulation_Runs">No of Simulation Runs:</label>
+                        <input type="text" name="No of Simulation Runs" id="R" class="txt" />
+                        <br>
+                        <br>
+                        <label for="Increment_Value">Increment Value:</label>
+                        <input type="text" name="Increment Value" id="Inc" class="txt" />
+                </div>
+                <div class="w3-col m3">
+                    <fieldset>
+                        <legend>Output</legend>
+                        <br>
+                        <label for="Optimum_Quantity">Optimum Quantity:</label>
+                        <input type="text" name="Optimum Quantity" id="QX" class="txt" readonly/>
+                        <br>
+                        <br>
+                        <label for="Expected_Profit">Expected Profit:</label>
+                        <input type="text" name="Expected Profit" id="Ep" class="txt" />
+
+                        <br>
+<!--                        <legend>Graph Type</legend>
+                        <input type="radio" name="graph" onclick="vhc()">Normally Distributed Demand<br>
+                        <input id="graph_choice" type="checkbox" name="graph">Quntity to be Purchase vs Profit<br>-->
+
+                        <br>
+
+                        <button type="button" onclick="runtrial()" style="margin-right: 50px">RUN TRIAL</button>
+                        <button type="button" onclick="reset()" style="margin-right: 30px">RESET</button>
+                        <button type="button" onclick="graph_show()">GRAPH</button>
+                        <br>
+                    </fieldset>	
+                </div>
+
+              
+            </form>
+
+        </div>
+
+  
+    <div id="graphArea" style="visibility: hidden;">
+                    <center>Quantity to be Purchased vs Profit</center>
+                    <div id="canvasContainer" class="w3-col m5">
+                    <!--<canvas id="myChart" width="1000" height="400"></canvas>-->
+                    </div>
+                </div>
+  
+</div>
+<!-- Simulator Ends -->
+
+
+
+<!-- References Goes Here -->
+
+    <div id = "ref" class=" w3-container city"> 
+      <h2>Reference</h2>
+  <p> <ul>
+                  
+          <li>Cachon, G. P., (2003), Supply Chain Coordination with Contracts, Handbooks in Operations Research and Management Science: Supply Chain Management, 1-126.</li>
+
+                  <li>Cachon, G. P. and Lariviere, M. A., (2005), Supply Chain Coordination with Revenue-Sharing Contracts: Strengths and Limitations, Management Science, 51(1), 30-34.</li>
+
+<li>Liu, Y., Zhang Y. and Zhao, Z., (2005), The Survey on Supply Chain Coordination with Contracts, ICEC05, August 15-17, Xian, China, 807-809.</li>
+
+                  <li>Moses, M. and Seshadri, S., (2000), Policy mechanisms for supply chain coordination, IIE Transactions, 32, 245-262.</li>
+				  
+				  <li>Thomas, D. J. and Griffin, P. M., (1996), Coordinated supply chain management, European Journal of Operational Research, 94, 1-15.</li>
+				  
+				  <li>Qin, Z. and Yang, J., (2004), Analysis of a Revenue-Sharing Contract in Supply Chain Management, National Transportation Center.</li>
+				  
+				  <li>Xu, L. and Beamon, B. M., (2006), Supply Chain Coordination and Cooperation Mechanisms: An Attribute-Based Approach, The Journal of Supply Chain Management, 4-12.</li>
+</p>
+  </div>
+  <!-- References Ends Here -->
+  
+  
+  
+  <script type="text/javascript" src="http://www.vls21.iitkgp.ernet.in/~vls21/js/swfobject/swfobject.js"></script>
+			
+			<!--  STEP TWO: configure SWFObject JavaScript and embed CU3ER slider -->
+			<script type="text/javascript">
+					var flashvars = {};
+					flashvars.xml = "supplychain_problem_config.xml";
+					flashvars.font = "font.swf";
+					var attributes = {};
+					attributes.wmode = "transparent";
+					attributes.id = "slider";
+					swfobject.embedSWF("supplychain_problem.swf", "cu3er-container", "690", "525", "9", "expressInstall.swf", flashvars, attributes);
+			</script>
+
+<!-- Theory Dropdown Items --> 
+	<div id = "Pdec" class=" w3-container city"> 
+	<h2>Problem Description</h2>
+	<!--div class="slider-frame">		
+			
+					<!--  STEP THREE: insert CU3ER div container >
+					<div id="cu3er-container">
+						<a href="http://www.adobe.com/go/getflashplayer">
+							<img src="../../../../www.adobe.com/images/shared/download_buttons/get_flash_player.gif" alt="Get Adobe Flash player" />
+						</a>
+					</div>
+				</div-->
+
+	<h2 class="page-title">What is Newsvendor Problem?</h2>
+                  <div class="title-info"> The newsvendor problem is to make a single-period procurement decision of a single product under stochastic demand</div>
+                  <h3>Newsvendor Framework:</h3>
+                  <ul>
+                    <li>                      One chance to decide on the stocking quantity of the product                   </li> <br>
+                    <li>                      Demand for the product is uncertain              </li> <br>
+                    <li>                    Known marginal profit for each unit sold and known marginal loss for the ones that are bought and not sold                    </li> <br>
+                    <li>                      Goal : Maximize expected profit</strong></li>
+                  </ul>
+                  <p>&nbsp;</p>
+                  <p><strong></p>
+<br>
+<h3>Examples where the Newsvendor Framework is appropriate:</h3>
+<ul>
+                    
+              <li><strong>Perishable Goods</strong>
+<ul>
+                  <li>Meals in a Cafeteria</li> <br>
+                  <li>Dairy foods</li>
+                </ul>
+              </li> 
+   <li><strong>Short selling season</strong>
+                <ul>
+                  <li>Christmas trees, toys</li> <br>
+                  <li>Flowers on Valentine's day</li> <br>
+                  <li>Fashion clothes, seasonal clothes</li> <br>
+                  <li>Newspaper</li></ul></li>
+</ul>
+</div>
+				<div class="clear">&nbsp;
+				  <p>&nbsp;</p>
+				</div>	</div>
+<div id = "Aphe" class=" w3-container city"> 
+      <div class="sliderFrame">
+  <div id="w3-content" style="max-width:700px;margin:10px auto;">
+
+<img class="mySlides1" src="theory-slide(1).PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="theory-slide(2).PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="theory-slide(3).PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="theory-slide(4).PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="theory-slide(5).PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="theory-slide(6).PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="theory-slide(7).PNG" style="width:702px ; height: 519px">
+</div>
+<a class="w3-btn-floating" style="position:absolute;top:50%;left:18%;cursor:pointer;" onclick="plusDivs1(-1)" ><</a>
+<a class="w3-btn-floating" style="position:absolute;top:50%;right:18%;cursor:pointer;" onclick="plusDivs1(1)" >></a>
+<script>
+var slideIndex1 = 1;
+showDivs1(slideIndex1);
+
+function plusDivs1(n1) {
+  showDivs1(slideIndex1 += n1);
+}
+
+function showDivs1(n1) {
+  var i1;
+  var x1 = document.getElementsByClassName("mySlides1");
+  if (n1 > x1.length) {slideIndex1 = 1}    
+  if (n1 < 1) {slideIndex1 = x1.length} ;
+  for (i1 = 0; i1 < x1.length; i1++) {
+     x1[i1].style.display = "none";  
+  }
+  x1[slideIndex1-1].style.display = "block";  
+}
+</script>
+</div>
+</div>
+
+  <div id = "Simflo" class=" w3-container city"> 
+ 
+      <div class="sliderFrame">
+  <div id="w3-content" style="max-width:700px;margin:10px auto;">
+<img class="mySlides3" src="flowchartSlide(1).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(2).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(3).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(4).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(5).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(6).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(7).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(8).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(9).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(10).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(11).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(12).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(13).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(14).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(15).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(16).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(17).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(18).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(19).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(20).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(21).PNG" style="width:702px ; height: 519px">
+<img class="mySlides3" src="flowchartSlide(22).PNG" style="width:702px ; height: 519px">
+
+
+</div>
+<a class="w3-btn-floating" style="position:absolute;top:50%;left:18%;cursor:pointer;" onclick="plusDivs3(-1)" ><</a>
+<a class="w3-btn-floating" style="position:absolute;top:50%;right:18%;cursor:pointer;" onclick="plusDivs3(1)" >></a>
+
+
+<script>
+var slideIndex3 = 1;
+showDivs3(slideIndex3);
+
+function plusDivs3(n3) {
+  showDivs3(slideIndex3 += n3);
+}
+
+function showDivs3(n3) {
+  var i3;
+  var x3 = document.getElementsByClassName("mySlides3");
+  if (n3 > x3.length) {slideIndex3 = 1}    
+  if (n3 < 1) {slideIndex3 = x3.length} ;
+  for (i3 = 0; i3 < x3.length; i3++) {
+     x3[i3].style.display = "none";  
+  }
+  x3[slideIndex3-1].style.display = "block";  
+}
+</script>
+</div>
+</div>
+  	<!-- Theory Ends -->
+    
+    
+    
+    
+    
+    <!-- Procedure Dropdown Items --> 
+  
+ 
+<div id = "ppt" class=" w3-container city"> 
+      <div class="sliderFrame">
+  <div id="w3-content" style="max-width:700px;margin:10px auto;">
+
+<img class="mySlides1" src="Slide1.PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="Slide2.PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="Slide3.PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="Slide4.PNG" style="width:702px ; height: 519px">
+<img class="mySlides1" src="Slide5.PNG" style="width:702px ; height: 519px">
+</div>
+
+
+<script>
+var slideIndex5 = 1;
+showDivs5(slideIndex5);
+
+function plusDivs5(n5) {
+  showDivs5(slideIndex5 += n5);
+}
+
+function showDivs5(n5) {
+  var i5;
+  var x5 = document.getElementsByClassName("mySlides5");
+  if (n5 > x5.length) {slideIndex5 = 1}    
+  if (n5 < 1) {slideIndex5 = x5.length} ;
+  for (i5 = 0; i5 < x5.length; i5++) {
+     x5[i5].style.display = "none";  
+  }
+  x5[slideIndex5-1].style.display = "block";  
+}
+</script> 
+</div>
+</div>
+<!-- procedure Ends-->
+
+
+
+<!-- Assignment Goes Here -->
+<div id = "assign" class=" w3-container city"> 
+
+ <div class="sliderFrame">
+  <div id="w3-content" style="max-width:700px;margin:10px auto;">
+
+<img class="mySlides5" src="aa1.png" style="width:702px ; height: 519px">
+<img class="mySlides5" src="aa2.png" style="width:702px ; height: 519px">
+
+</div>
+
+<a class="w3-btn-floating" style="position:absolute;top:50%;left:18%;cursor:pointer;" onclick="plusDivs5(-1)" ><</a>
+<a class="w3-btn-floating" style="position:absolute;top:50%;right:18%;cursor:pointer;" onclick="plusDivs5(1)" >></a>
+<script>
+var slideIndex5 = 1;
+showDivs5(slideIndex5);
+
+function plusDivs5(n5) {
+  showDivs5(slideIndex5 += n5);
+}
+
+function showDivs5(n5) {
+  var i5;
+  var x5 = document.getElementsByClassName("mySlides5");
+  if (n5 > x5.length) {slideIndex5 = 1}    
+  if (n5 < 1) {slideIndex5 = x5.length} ;
+  for (i5 = 0; i5 < x5.length; i5++) {
+     x5[i5].style.display = "none";  
+  }
+  x5[slideIndex5-1].style.display = "block";  
+}
+</script> 
+</div>
+</div>
+  
+<!-- assignment Ends here -->
+
+
+<!-- Self Evaluation -->
+<div id = "seval" class=" w3-container city"> 
+       <div class="grid_12 omega" id="right-column">
+	    <div class="right-column">
+	      <h2 class="page-title">Quiz</h2>
+	      <div class="title-info"><strong>Choose the appropriate answers from the given alternatives :	      </strong></div>
+	      <blockquote>
+	        <form id="form1" runat="server">
+          <p class="ques">1) What is the main objective of a Supply Chain Coordination?
+        </p>
+        <p><input name="Radio1" type="radio" id="Radio11" />
+		&nbsp;	To maximize his sales</p>
+		<p>
+		<input name="Radio1" id="Radio12" type="radio" />
+		&nbsp;	To maximize his profit</p>
+		<p><input name="Radio1" id="Radio13" type="radio" />
+		&nbsp;	To minimize the probability of stockout</p>
+		<p class="ques">2) The Supply Chain Coordination contract discussed over here is:</p>
+		<p><input name="Radio2" id="Radio21" type="radio" />
+		&nbsp;	A Buy Back Contract</p>
+		<p><input name="Radio2" id="Radio22" type="radio" />
+		&nbsp;	A Revenue Sharing Contract Contract</p>
+		<p><input name="Radio2" id="Radio23" type="radio" />
+		&nbsp;	A Price Only Quantity Contract</p>
+		<p class="ques">3) The Supply Chain Coordination:</p>
+		<p><input name="Radio3" id="Radio31" type="radio" />
+		&nbsp;	Minimizes Risk</p>
+		<p><input name="Radio3" id="Radio32" type="radio" />
+		&nbsp;	Maximizes Profit</p>
+		<p><input name="Radio3" id="Radio33" type="radio" />
+		&nbsp;	Both</p>
+		<p class="ques">4) When the demand is higher than the ordered quantity which of the following cost is incurred?</p>
+		<p><input name="Radio4" id="Radio41" type="radio" />
+		&nbsp;Underage Cost</p>
+		<p><input name="Radio4" id="Radio42" type="radio" />
+		&nbsp;Overage cost</p>
+		<p><input name="Radio4" id="Radio43" type="radio" />
+		&nbsp;Marginal Cost</p>
+		<p class="ques">5) Marginal Loss is calculated as:</p>
+		<p><input name="Radio5" id="Radio51" type="radio" />
+		&nbsp; Sell Price - Shortage Cost</p>
+		<p><input name="Radio5" id="Radio52" type="radio" />
+		&nbsp;Purchase Cost - Shortage Cost</p>
+		<p><input name="Radio5" id="Radio53" type="radio" />
+		&nbsp;Purchase Cost - Salvage Value</p>
+		<p><span class="ques">6) Decentralized supply chain setting is a setting in which: </span><br />
+		<br />
+		</p>
+		<p><input name="Radio6" id="Radio61" type="radio" />
+		&nbsp; The wholesaler is leader of supply chain</p>
+		<p><input name="Radio6" id="Radio62" type="radio" />
+		&nbsp; Both the wholesaler and the retailer have equal share in the supply chain</p>
+		<p><input name="Radio6" id="Radio63" type="radio" />
+		&nbsp; The retailer is leader of supply chain</p>
+		<p><span class="ques">7) The profit in a coordinated supplychain is:</span><br />
+		<br />
+		<p><input name="Radio7" id="Radio71" type="radio" /> 
+		&nbsp;greater than that of an uncoordinated supplychain </p>
+		<p><input name="Radio7" id="Radio72" type="radio" />
+		&nbsp;smaller than that of an uncoordinated supplychain </p>
+		<p><input name="Radio7" id="Radio73" type="radio" />
+		&nbsp;None of the above </p>
+		<p class="ques">8) Increase in number of simulation runs would result in: </p>
+		<p><input name="Radio8" id="Radio81" type="radio" />
+		&nbsp;No change in the results</p>
+		<p><input name="Radio8" id="Radio82" type="radio" />
+		&nbsp;Decrese the accuracy of simulation results</p>
+		<p><input name="Radio8" id="Radio83" type="radio" />
+		&nbsp;Increse the accuracy of simulation results</p>
+		<p class="ques">9) Increase in the value of 'f' (% revenue shared by the retailer) would mean:</p>
+		<p><input name="Radio9" id="Radio91" type="radio" />
+		&nbsp;	A decrease in the value of new wholesale price</p>
+		<p><input name="Radio9" id="Radio92" type="radio" />
+		&nbsp;	A increase in the value of new wholesale price</p>
+		<p><input name="Radio9" id="Radio93" type="radio" />
+		&nbsp;	None of the above</p>
+        <p class="ques">10) In  a system, an object of interest is called</p>
+		<p><input name="Radio10" id="Radio101" type="radio" />
+		&nbsp;Attributes</p>
+		<p><input name="Radio10" id="Radio102" type="radio" />
+		&nbsp;entity</p>
+		<p><input name="Radio10" id="Radio103" type="radio" />
+		&nbsp;Function</p>
+ 
+		<p>&nbsp;</p>
+		<p>&nbsp;</p>
+		&nbsp;
+	       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<input name="Button1" type="reset" value="Press for Evaluation" onclick="javascript: score()" />
+
+	       </form>
+	      </blockquote>		
+			<!--End Left Section -->
+			
+			
+			<!--Right Section Starts--><!--End Right Section -->
+	</div>
+ </div>	
+ </div>
+  </div>
+  
+ <!-- Self Evaluation Ends Here -->
+ 
+ <!-- FeedBack -->
+  <div id = "fdbk" class=" w3-container city"> 
+            <h3 class="note">Feedback - Virtual Laboratory for Simulation and Gaming</h3>
+<p style="margin-top: 20px;"  class="note" >Welcome to the IIT KHARAGPUR Virtual Lab online feedback system. Thanks for taking the time to share your feedback. We&#39;ll use the information you provide below to improve our virtual labs.</p>
+<form name="frm" action="feedback.html" method="post" onSubmit="return chk()">
+<div style="margin-left: 38px;"><p style="color:red;">* Required</p></div>
+<p style="margin:0;"><b>Name of the user</b></p>
+<div style="margin-left: 38px;margin-bottom: 0px;"><p> <!-- <label for="uname">Name</label> -->
+<input id="uname" type="text" name="uname"/>*</p></div>
+
+
+<p style="margin:0;"><b>Department </b>*</p>
+<div style="margin-left: 38px;margin-bottom: 20px;"><p>
+<!-- Mechanical Engineering</p></div> -->
+<input id="udept" type="text" name="udept" size="85"/>*</p></div>
+
+<p style="margin:0;"><b>Name of the Institute </b>*</p>
+<div style="margin-left: 38px;margin-bottom: 20px;"><p>
+<input id="uinstitute" type="text" name="uinstitute" size="85"/>*</p></div>
+
+<p style="margin:0;"><b>Place of the Institute </b>*</p>
+<div style="margin-left: 38px;margin-bottom: 20px;"><p>
+<input id="uplace" type="text" name="uplace" size="85"/>*</p></div>
+
+
+<table width="100%" border=0> 
+<tr>
+<td style="background-color:#D8D8D8;font-weight: bold;">Lab Details</td>
+</tr>
+</table>
+
+<p style="margin:0;"><b>Name of the Experiment </b>*</p>
+<div style="margin-left: 38px;"><p>Modeling supply chain risks using simulation.
+</p></div>
+<p class="increase"><b>Type of Experiment </b>*</p>
+<div style="margin-left: 34px;"><p class="increase"><input type="radio" name="vlType" value="Simulator" id="vlType" class="rd" checked/> Simulator</p>
+<!-- <p class="increase"><input type="radio" name="vlType" value="Measurement" id="vlType" class="rd"/> Measurement</p>
+<p class="increase"><input type="radio" name="vlType" value="Remote trigger" id="vlType" class="rd"/> Remote trigger</p> -->
+</div>
+<!-- <p>&nbsp;</p> -->
+
+<!-- <h2 style="background-color:#D8D8D8;font-weight: bold;">2. Please tell your agreement with the following statements</h2> -->
+<table width="100%" border=0> 
+<tr>
+<td style="background-color:#D8D8D8;font-weight: bold;">2. Please tell your agreement with the following statements *</td>
+</tr>
+</table>
+
+<!-- <p>&nbsp;</p> -->
+<div><div style="width:100%">
+<table style="border:1px solid#ccc;padding:3px 5px;">
+<thead>
+<tr>
+<td width="23%"></td>
+<td width="5%"></td>
+<td align="center" width="15%">Excellent</td>
+<td align="center" width="12%">Very Good</td>
+<td align="center" width="10%">Good</td>
+<td align="center" width="12%">Average</td>
+<td align="center" width="10%">Poor</td>
+
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="right" style="background-color:#E8E8E8;">How do you rate the online performance of the experiment?</td>
+<td style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expPerformance" value="Excellent" id="expPerformance"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expPerformance" value="Very Good" id="expPerformance"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expPerformance" value="Good" id="expPerformance"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+
+<input type="radio" name="expPerformance" value="Average" id="expPerformance"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expPerformance" value="Poor" id="expPerformance"/>
+</td>
+</tr>
+<tr>
+<td align="right">To what extent did you have control over the interactions?</td>
+<td></td>
+<td align="center">
+<input type="radio" name="interactionCtrl" value="Excellent" id="interactionCtrl"/>
+</td>
+<td align="center">
+<input type="radio" name="interactionCtrl" value="Very Good" id="interactionCtrl"/>
+</td>
+<td align="center">
+
+<input type="radio" name="interactionCtrl" value="Good" id="interactionCtrl"/>
+</td>
+<td align="center">
+<input type="radio" name="interactionCtrl" value="Average" id="interactionCtrl"/>
+</td>
+<td align="center">
+<input type="radio" name="interactionCtrl" value="Poor" id="interactionCtrl"/>
+</td>
+</tr>
+<tr>
+<td align="right" style="background-color:#E8E8E8;">To what degree was the actual lab environment simulated?</td>
+<td style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="simulatorCmpr" value="Excellent" id="simulatorCmpr"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+
+<input type="radio" name="simulatorCmpr" value="Very Good" id="simulatorCmpr"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="simulatorCmpr" value="Good" id="simulatorCmpr"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="simulatorCmpr" value="Average" id="simulatorCmpr"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="simulatorCmpr" value="Poor" id="simulatorCmpr"/>
+</td>
+</tr>
+<tr>
+<td align="right">Was the measurement and analysis of data easy for you?</td>
+<td></td>
+<td align="center">
+
+<input type="radio" name="dataMrmnt" value="Excellent" id="dataMrmnt"/>
+</td>
+<td align="center">
+<input type="radio" name="dataMrmnt" value="Very Good" id="dataMrmnt"/>
+</td>
+<td align="center">
+<input type="radio" name="dataMrmnt" value="Good" id="dataMrmnt"/>
+</td>
+<td align="center">
+<input type="radio" name="dataMrmnt" value="Average" id="dataMrmnt"/>
+</td>
+<td align="center">
+<input type="radio" name="dataMrmnt" value="Poor" id="dataMrmnt"/>
+</td>
+</tr>
+<tr>
+<td align="right" style="background-color:#E8E8E8;">The manuals were found to be helpful</td>
+
+<td style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="manuals" value="Excellent" id="manuals"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="manuals" value="Very Good" id="manuals"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="manuals" value="Good" id="manuals"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="manuals" value="Average" id="manuals"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="manuals" value="Poor" id="manuals"/>
+</td>
+</tr>
+
+<tr>
+<td align="right">Were the links provided consistent with the objectives of the experiment?</td>
+<td></td>
+<td align="center">
+<input type="radio" name="expObjectives" value="Excellent" id="expObjectives"/>
+</td>
+<td align="center">
+<input type="radio" name="expObjectives" value="Very Good" id="expObjectives"/>
+</td>
+<td align="center">
+<input type="radio" name="expObjectives" value="Good" id="expObjectives"/>
+</td>
+<td align="center">
+<input type="radio" name="expObjectives" value="Average" id="expObjectives"/>
+</td>
+<td align="center">
+
+<input type="radio" name="expObjectives" value="Poor" id="expObjectives"/>
+</td>
+</tr>
+<tr>
+<td align="right" style="background-color:#E8E8E8;">Were the results of the experiment easily interpreted?</td>
+<td style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expResult" value="Excellent" id="expResult"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expResult" value="Very Good" id="expResult"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expResult" value="Good" id="expResult"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+
+<input type="radio" name="expResult" value="Average" id="expResult"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="expResult" value="Poor" id="expResult"/>
+</td>
+</tr>
+<tr>
+<td align="right">A clear understanding of the experiment and related topics was gained</td>
+<td></td>
+<td align="center">
+<input type="radio" name="understandExp" value="Excellent" id="understandExp"/>
+</td>
+<td align="center">
+<input type="radio" name="understandExp" value="Very Good" id="understandExp"/>
+</td>
+<td align="center">
+
+<input type="radio" name="understandExp" value="Good" id="understandExp"/>
+</td>
+<td align="center">
+<input type="radio" name="understandExp" value="Average" id="understandExp"/>
+</td>
+<td align="center">
+<input type="radio" name="understandExp" value="Poor" id="understandExp"/>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>&nbsp;</p>
+<p><b>How helpful do you feel the system is? </b></p>
+<!-- <p>&nbsp;</p> -->
+
+<div><p><textarea name="sysHelp" rows="8" cols="75" id="sysHelp"></textarea></p></div>
+<p>&nbsp;</p>
+<p><b>Did you experience any problems? </b></p>
+<!-- <p>&nbsp;</p> -->
+<div><p><textarea name="sysPblm" rows="8" cols="75" id="sysPblm"></textarea></p></div>
+<p>&nbsp; </p>
+<p><b>Is there anything you would like to tell us? </b></p>
+<!-- <p>&nbsp;</p> -->
+<div><p><textarea name="tellUs" rows="8" cols="75" id="tellUs"></textarea></p></div>
+<p>&nbsp;</p>
+<p><b>Did you feel confident enough while performing the experiment? </b>*</p>
+
+<!-- <p>&nbsp;</p> -->
+<div><p><input type="radio" name="confidence" value="Yes" id="confidence"/>
+Yes</p></div>
+<div><p><input type="radio" name="confidence" value="No" id="confidence"/>
+No</p></div>
+<div><p><input type="radio" name="confidence" value="Can't say" id="confidence"/>
+Can&#39;t say</p></div>
+<p>&nbsp;</p>
+<p><b>Was the experiment/process motivating enough? </b>*</p>
+<!-- <p>&nbsp;</p> -->
+<div><p><input type="radio" name="expMotivation" value="Yes" id="expMotivation"/>
+Yes</p></div>
+
+<div><p><input type="radio" name="expMotivation" value="No" id="expMotivation"/>
+No</p></div>
+<div><p><input type="radio" name="expMotivation" value="Can't say" id="expMotivation"/>
+Can&#39;t say</p></div>
+<p>&nbsp;</p>
+<p><b>Did you go through the manual/ step by step method before performing the experiments live? </b>*</p>
+<!-- <p>&nbsp;</p> -->
+<div><p><input type="radio" name="stepmethdExp" value="Yes" id="stepmethdExp"/>
+Yes</p></div>
+<div><p><input type="radio" name="stepmethdExp" value="No" id="stepmethdExp"/>
+No</p></div>
+
+<p>&nbsp;</p>
+<!-- <p><b>Please answer the following</b></p>  <br/> -->
+
+<table width="100%" border=0> 
+<tr>
+<td style="background-color:#D8D8D8;font-weight: bold;">3. Please answer the following *</td>
+</tr>
+</table>
+
+<div style="width:100%;">
+<div>
+<table border="0" align="left" style="border:1px solid#ccc;padding:3px 5px;">
+<thead>
+<tr>
+<td width="40%"></td>
+<td width="10%"></td>
+<td width="13%" align="center">Yes</td>
+<td width="13%" align="center">No</td>
+</tr>
+</thead>
+<tbody>
+
+<tr>
+<td align="right" style="background-color:#E8E8E8;">Did you get the feel "actual lab" while performing the experiments</td>
+<td align="center" style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="actualLab" value="Yes" id="actualLab"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="actualLab" value="No" id="actualLab"/>
+</td>
+</tr>
+<tr>
+<td align="right">Did you feel the absence of an instructor?</td>
+<td></td>
+<td align="center">
+<input type="radio" name="instructorAbs" value="Yes" id="instructorAbs"/>
+
+</td>
+<td align="center">
+<input type="radio" name="instructorAbs" value="No" id="instructorAbs"/>
+</td>
+</tr>
+<tr>
+<td align="right" style="background-color:#E8E8E8;">Could you run the experiments smoothly, i.e., without interruptions?</td>
+<td align="center" style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="withoutInt" value="Yes" id="withoutInt"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="withoutInt" value="No" id="withoutInt"/>
+</td>
+</tr>
+<tr>
+
+<td align="right">Could you measure and analyze the data successfully?</td>
+<td></td>
+<td align="center">
+<input type="radio" name="analyzeData" value="Yes" id="analyzeData"/>
+</td>
+<td align="center">
+<input type="radio" name="analyzeData" value="No" id="analyzeData"/>
+</td>
+</tr>
+<tr>
+<td align="right" style="background-color:#E8E8E8;">Did you follow the step by step method before running the live experiment?</td>
+<td align="center" style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="stepmethdBeforeRun" value="Yes" id="stepmethdBeforeRun"/>
+</td>
+
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="stepmethdBeforeRun" value="No" id="stepmethdBeforeRun"/>
+</td>
+</tr>
+<tr>
+<td align="right">Could you compare your results with the given typical results?</td>
+<td></td>
+<td align="center">
+<input type="radio" name="compareRes" value="Yes" id="compareRes"/>
+</td>
+<td align="center">
+<input type="radio" name="compareRes" value="No" id="compareRes"/>
+</td>
+</tr>
+<tr>
+<td align="right" style="background-color:#E8E8E8;">Do you think performing experiments through virtual labs was more challenging than the real lab experiments?</td>
+
+<td align="center" style="background-color:#E8E8E8;"></td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="performExp" value="Yes" id="performExp"/>
+</td>
+<td align="center" style="background-color:#E8E8E8;">
+<input type="radio" name="performExp" value="No" id="performExp"/>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>&nbsp;</p>
+<p><b>Specify three problems/difficulties you faced while performing the experiments? </b></p> <!-- <br/> -->
+<div><p>
+<textarea name="threePblms" rows="8" cols="75" id="threePblms"></textarea>
+
+</p></div>
+<p>&nbsp;</p>
+<p><b>Describe three interesting things about the experiments. </b></p>
+<!-- <p>&nbsp;</p> -->
+<div><p>
+<textarea name="threeThings" rows="8" cols="75" id="threeThings"></textarea>
+</p></div>
+<p>&nbsp;</p>
+<p><b>Do you think doing experiments through virtual lab gives scope for more innovative and creative research work? </b>*</p>
+<!-- <p>&nbsp;</p> -->
+<div><p>
+<input type="radio" name="moreScope" value="Yes" id="moreScope"/>
+Yes </p>
+
+<p>
+<input type="radio" name="moreScope" value="No" id="moreScope"/>
+No </p></div>
+<p>&nbsp;</p>
+<div>
+<!-- <p>
+<b>Type the code shown </b>*<br/>
+<input name="captcha_code" size="15" class=""/><br/>
+<img id="captcha" src="captcha/captchadisp.php?md5(uniqid(time()));" style="padding-top:8px"/>
+</p> -->
+<p>
+</p>
+<p>&nbsp;</p>
+<p>
+<input type="submit" name="submit" id="submit" value="Submit">
+
+</p>
+</div>
+<p>&nbsp;</p>
+<p>&nbsp;</p>   
+  </div>
+  
+<script>
+openCity("Home")
+function openCity(cityName) {
+    var i;
+    var x = document.getElementsByClassName("city");
+    for (i = 0; i < x.length; i++) {
+       x[i].style.display = "none";  
+    }
+    document.getElementById(cityName).style.display = "block";  
+}
+</script>
+  
+  <footer class="w3-container w3-center w3-teal ">
+    <p class="cfoot">Developed by The Department of Industrial Systems and Engineering, IIT Kharagpur
+  <br/>This Project is funded by MHRD, Government of India.</p>
+    
+  </footer>
+  
+  </body>
+  </html> 
